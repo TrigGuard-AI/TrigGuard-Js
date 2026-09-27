@@ -1,0 +1,27 @@
+version: 2.1
+
+# Replaces the CI GitHub Actions check. Tag publish stays on GitHub.
+jobs:
+  sdk_checks:
+    docker:
+      - image: cimg/node:20.19.0
+    resource_class: small
+    steps:
+      - checkout
+      - run:
+          name: Install, build, lint, and test
+          command: |
+            set -euo pipefail
+            if [ -f package-lock.json ]; then
+              npm ci
+            else
+              npm install
+            fi
+            npm run build
+            npm run lint
+            npm test
+
+workflows:
+  sdk_checks:
+    jobs:
+      - sdk_checks
